@@ -1,12 +1,14 @@
 package com.ubaya.studentapp.model
 
+import com.google.gson.annotations.SerializedName
+
 data class Aircraft(
     var id:String?,
     var model:String?,
     var manufacturer: String?,
-    var capacity: Int?,
-    var aircraftSpecs: AircraftSpecs?,
-    var passangerClasses: ArrayList<String>?,
+    var capacity: Number?,
+    @SerializedName("dimensions") var aircraftSpecs: AircraftSpecs?,
+    var passengerClasses: ArrayList<String>?,
 )
 
 data class AircraftSpecs(
