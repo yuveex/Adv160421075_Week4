@@ -1,6 +1,7 @@
 package com.ubaya.studentapp.view
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,10 @@ import com.ubaya.studentapp.databinding.FragmentStudentDetailBinding
 import com.ubaya.studentapp.model.Student
 import com.ubaya.studentapp.viewmodel.DetailViewModel
 import com.ubaya.studentapp.viewmodel.StudentListViewModel
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 /**
  * A simple [Fragment] subclass.
@@ -54,6 +59,19 @@ class StudentDetailFragment : Fragment() {
             binding.txtName.setText(student.name)
             binding.txtDob.setText(student.dob)
             binding.txtPhone.setText(student.phone)
+
+            binding.btnUpdate?.setOnClickListener{
+                Observable.timer(5, TimeUnit.SECONDS)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe{
+                        Log.d("Messages", "Five seconds")
+                        MainActivity.showNotification(student.name.toString(),
+                            "A new notification created",
+                            R.drawable.baseline_emoji_people_24)
+                    }
+
+            }
             
 //            binding.txtId.setText(student?.id ?: "Student ID")
 //            binding.txtName.setText(student?.name ?: "Student Name")
