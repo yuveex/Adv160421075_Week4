@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.squareup.picasso.Callback
+import com.squareup.picasso.Picasso
 import com.ubaya.studentapp.R
 import com.ubaya.studentapp.databinding.FragmentStudentDetailBinding
 import com.ubaya.studentapp.model.Student
@@ -17,6 +19,7 @@ import com.ubaya.studentapp.viewmodel.StudentListViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import java.lang.Exception
 import java.util.concurrent.TimeUnit
 
 /**
@@ -43,10 +46,35 @@ class StudentDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        var studentId = "1"
+
+        arguments?.let{
+            studentId = StudentDetailFragmentArgs.fromBundle(requireArguments()).studentId
+        }
+
         viewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
-        viewModel.refresh()
+        viewModel.refresh(studentId)
 
         observeViewModel()
+
+        viewModel.studentLD.observe(viewLifecycleOwner, Observer {
+            var student = it
+
+            val picasso = Picasso.Builder(view.context)
+            picasso.listener { picasso, uri, exception ->
+                exception.printStackTrace()
+            }
+            picasso.build().load(student.photoUrl).into(binding.imgStudentDetail, object:
+                Callback {
+                override fun onSuccess() {
+                }
+
+                override fun onError(e: Exception?) {
+                    Log.e("picasso_error", e.toString())
+                }
+
+            })
+        })
 
 
     }
