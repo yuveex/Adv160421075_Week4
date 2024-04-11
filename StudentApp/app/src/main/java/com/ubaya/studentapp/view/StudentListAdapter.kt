@@ -30,11 +30,12 @@ class StudentListAdapter(val studentList:ArrayList<Student>)
         holder.binding.txtId.text = studentList[position].id
         holder.binding.txtName.text = studentList[position].name
         holder.binding.btnDetail.setOnClickListener{
-            val action = StudentListFragmentDirections.actionStudentListFragmentToStudentDetailFragment()
+            val action = StudentListFragmentDirections
+                .actionStudentListFragmentToStudentDetailFragment(studentList[position].id.toString())
             Navigation.findNavController(it).navigate(action)
         }
 
-         val picasso = Picasso.Builder(holder.itemView.context)
+        val picasso = Picasso.Builder(holder.itemView.context)
         picasso.listener { picasso, uri, exception ->
             exception.printStackTrace()
         }
