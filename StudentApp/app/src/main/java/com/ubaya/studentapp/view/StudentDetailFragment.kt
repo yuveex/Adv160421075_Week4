@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit
  * Use the [StudentDetailFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class StudentDetailFragment : Fragment() {
+class StudentDetailFragment : Fragment(), ButtonDetailClickListener {
     private lateinit var binding:FragmentStudentDetailBinding
     private lateinit var viewModel: DetailViewModel
 //    private var student: Student? = null
@@ -46,6 +46,9 @@ class StudentDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.listener = this
+        binding.student = Student("", "", "", "", "https://randomuser.me/api/portraits/men/12.jpg")
+
         var studentId = "1"
 
         arguments?.let{
@@ -57,49 +60,64 @@ class StudentDetailFragment : Fragment() {
 
         observeViewModel()
 
-        viewModel.studentLD.observe(viewLifecycleOwner, Observer {
-            var student = it
+//        viewModel.studentLD.observe(viewLifecycleOwner, Observer {
+//            var student = it
+//
+//            val picasso = Picasso.Builder(view.context)
+//            picasso.listener { picasso, uri, exception ->
+//                exception.printStackTrace()
+//            }
+//            picasso.build().load(student.photoUrl).into(binding.imgStudentDetail, object:
+//                Callback {
+//                override fun onSuccess() {
+//                }
+//
+//                override fun onError(e: Exception?) {
+//                    Log.e("picasso_error", e.toString())
+//                }
+//
+//            })
+//        })
 
-            val picasso = Picasso.Builder(view.context)
-            picasso.listener { picasso, uri, exception ->
-                exception.printStackTrace()
+
+    }
+
+    override fun onButtonDetailClick(view: View) {
+        Observable.timer(5, TimeUnit.SECONDS)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe{
+                Log.d("Messages", "Five seconds")
+                MainActivity.showNotification(view.tag.toString(),
+                    "A new notification created",
+                    R.drawable.baseline_emoji_people_24)
             }
-            picasso.build().load(student.photoUrl).into(binding.imgStudentDetail, object:
-                Callback {
-                override fun onSuccess() {
-                }
-
-                override fun onError(e: Exception?) {
-                    Log.e("picasso_error", e.toString())
-                }
-
-            })
-        })
-
-
     }
 
     fun observeViewModel(){
         viewModel.studentLD.observe(viewLifecycleOwner, Observer {
             var student = it
+            Log.d("checkstudent", it.toString())
 
-            binding.txtId.setText(student.id)
-            binding.txtName.setText(student.name)
-            binding.txtDob.setText(student.dob)
-            binding.txtPhone.setText(student.phone)
+            binding.student = student
+//
+//            binding.txtId.setText(student.id)
+//            binding.txtName.setText(student.name)
+//            binding.txtDob.setText(student.dob)
+//            binding.txtPhone.setText(student.phone)
 
-            binding.btnUpdate?.setOnClickListener{
-                Observable.timer(5, TimeUnit.SECONDS)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe{
-                        Log.d("Messages", "Five seconds")
-                        MainActivity.showNotification(student.name.toString(),
-                            "A new notification created",
-                            R.drawable.baseline_emoji_people_24)
-                    }
-
-            }
+//            binding.btnUpdate?.setOnClickListener{
+//                Observable.timer(5, TimeUnit.SECONDS)
+//                    .subscribeOn(Schedulers.io())
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .subscribe{
+//                        Log.d("Messages", "Five seconds")
+//                        MainActivity.showNotification(student.name.toString(),
+//                            "A new notification created",
+//                            R.drawable.baseline_emoji_people_24)
+//                    }
+//
+//            }
             
 //            binding.txtId.setText(student?.id ?: "Student ID")
 //            binding.txtName.setText(student?.name ?: "Student Name")
